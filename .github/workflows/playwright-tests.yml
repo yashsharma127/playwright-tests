@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: [firefox, webkit, chrome]  # Test across browsers
+        browser: [firefox, webkit, chrome, chromium]  # Test across browsers
         # Optionally, add different Node.js versions or environments
     steps:
       - name: Checkout code
