@@ -1,54 +1,45 @@
-name: Playwright Tests on Azure VM
-
-on:
-  push:
-    branches: [ "tests", "main" ]
-  pull_request:
-    branches: [ "tests", "main" ]
-
 jobs:
   run-playwright-tests:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        browser: [firefox, webkit, chrome]  # Test across browsers
+        # Optionally, add different Node.js versions or environments
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Cache Node Modules
-      uses: actions/cache@v3
-      with:
-        path: |
-          node_modules
-          .npm
-        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-modules-
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            .npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Cache Playwright Browsers
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-playwright-browsers-
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-browsers-
 
-    - name: Install Playwright Browsers (if not cached)
-      run: |
-        if [ ! -d ~/.cache/ms-playwright ]; then
-          npx playwright install --with-deps
-        fi
+      - name: Install Playwright Browsers (if not cached)
+        run: |
+          if [ ! -d ~/.cache/ms-playwright ]; then
+            npx playwright install --with-deps
+          fi
 
-    - name: Create .env file with URL
-      run: |
-        echo "TARGET_VM_URL=http://${{ secrets.TARGET_VM_IP }}" > .env
-
-    - name: Run Playwright tests
-      run: npx playwright test
+      - name: Run Playwright tests
+        run: npx playwright test --project=${{ matrix.browser }}  # Run in parallel across browsers
