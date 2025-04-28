@@ -50,14 +50,21 @@ jobs:
       run: |
         echo "TARGET_VM_URL=http://${{ secrets.TARGET_VM_IP }}" > .env
 
-    - name: Run Playwright tests with trace and video recording
-      run: npx playwright test --reporter=html --output=playwright-report
+    - name: Run Playwright tests
+      run: npx playwright test
 
-    - name: Upload Playwright Trace and Video Artifacts
+    - name: Upload Playwright HTML Report
       uses: actions/upload-artifact@v3
       with:
-        name: playwright-traces
-        path: |
-          trace.zip
-          videos/**/*.webm
-          screenshots/**/*.png
+        name: playwright-report
+        path: playwright-report
+
+  download-artifact:
+    needs: run-playwright-tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Playwright Report
+      uses: actions/download-artifact@v3
+      with:
+        name: playwright-report  # Ensure this name matches the uploaded artifact name
+        path: ./downloaded-report
