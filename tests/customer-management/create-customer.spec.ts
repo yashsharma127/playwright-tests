@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import dotenv from "dotenv";
 dotenv.config();
-const baseURL = process.env.BASE_URL || "http://localhost:3000";
+const baseURL = process.env.TARGET_VM_URL || "http://localhost:3000";
 
 test.describe("Customer Management", () => {
     test.beforeEach(async ({ page }) => {

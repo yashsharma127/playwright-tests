@@ -5,7 +5,7 @@
 // dotenv.config();
 
 // const authFile = path.join(__dirname, "../playwright/.auth/auth.json");
-// const baseURL = process.env.BASE_URL || "http://localhost:3000";
+// const baseURL = process.env.TARGET_VM_URL || "http://localhost:3000";
 // setup("authenticate", async ({ page }) => {
 //   await page.goto(baseURL);
 
